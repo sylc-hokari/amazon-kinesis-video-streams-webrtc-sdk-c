@@ -14,3 +14,4 @@ CMakeLists.txt.user
 *.swp
 venv/
 
+docs-codex
