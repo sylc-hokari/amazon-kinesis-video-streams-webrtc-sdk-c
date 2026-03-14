@@ -45,6 +45,14 @@ function(build_dependency lib_name)
   # library building cmake.
   set(build_args ${ARGN})
 
+  if(DEFINED CMAKE_TOOLCHAIN_FILE AND NOT CMAKE_TOOLCHAIN_FILE STREQUAL "")
+    list(APPEND build_args -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE})
+  endif()
+
+  if(DEFINED RPI_SYSROOT AND NOT RPI_SYSROOT STREQUAL "")
+    list(APPEND build_args -DRPI_SYSROOT=${RPI_SYSROOT})
+  endif()
+
   file(REMOVE_RECURSE ${OPEN_SRC_INSTALL_PREFIX}/lib${lib_name})
 
   # build library

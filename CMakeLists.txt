@@ -233,6 +233,7 @@ if(BUILD_DEPENDENCIES)
     set(BUILD_ARGS -DBUILD_STATIC_LIBS=${BUILD_STATIC_LIBS}
                   -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                   -DOPENSSL_DIR=${OPEN_SRC_INSTALL_PREFIX}
+                  -DOPENSSL_ROOT_DIR=${OPEN_SRC_INSTALL_PREFIX}
                   -DUSE_OPENSSL=${USE_OPENSSL}
                   -DUSE_MBEDTLS=${USE_MBEDTLS}
                   -DLWS_OPENSSL_CRYPTO_LIBRARY=${OPENSSL_CRYPTO_LIBRARY}
@@ -320,6 +321,14 @@ endif()
 
 if (WIN32)
   SET(LIBWEBSOCKETS_LIBRARIES "websockets.lib")
+elseif (OPEN_SRC_INSTALL_PREFIX)
+  find_library(
+    LIBWEBSOCKETS_LIBRARIES
+    NAMES websockets REQUIRED
+    PATHS ${OPEN_SRC_INSTALL_PREFIX}/lib ${OPEN_SRC_INSTALL_PREFIX}/lib64
+    NO_DEFAULT_PATH)
+  set(LIBWEBSOCKETS_INCLUDE_DIRS ${OPEN_SRC_INSTALL_PREFIX}/include)
+  get_filename_component(LIBWEBSOCKETS_LIBRARY_DIRS ${LIBWEBSOCKETS_LIBRARIES} DIRECTORY)
 else()
   pkg_check_modules(LIBWEBSOCKETS REQUIRED libwebsockets)
 endif()
@@ -523,4 +532,3 @@ get_directory_property(clean_files ADDITIONAL_CLEAN_FILES)
 list(APPEND clean_files "${OPEN_SRC_INSTALL_PREFIX}")
 list(APPEND clean_files "${CMAKE_CURRENT_SOURCE_DIR}/build")
 set_directory_properties(PROPERTIES ADDITIONAL_CLEAN_FILES "${clean_files}")
-
