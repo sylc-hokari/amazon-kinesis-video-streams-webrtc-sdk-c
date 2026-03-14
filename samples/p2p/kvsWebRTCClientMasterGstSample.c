@@ -85,6 +85,9 @@ INT32 main(INT32 argc, CHAR* argv[])
                 pSampleConfiguration->srcType = RTSP_SOURCE;
                 pSampleConfiguration->rtspUri = argv[4];
             }
+        } else if (STRCMP(argv[3], "stdinh264") == 0) {
+            DLOGI("[KVS GStreamer Master] Using stdin H264 source in GStreamer");
+            pSampleConfiguration->srcType = STDIN_H264_SOURCE;
         } else {
             DLOGI("[KVS Gstreamer Master] Unrecognized source type. Defaulting to device source in GStreamer");
         }

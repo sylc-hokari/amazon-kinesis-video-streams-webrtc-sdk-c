@@ -232,6 +232,14 @@ PVOID sendGstreamerAudioVideo(PVOID args)
 
                     break;
                 }
+                case STDIN_H264_SOURCE: {
+                    senderPipeline = gst_parse_launch(
+                        "fdsrc fd=0 do-timestamp=true ! queue ! h264parse ! "
+                        "video/x-h264,stream-format=byte-stream,alignment=au,framerate=25/1 ! "
+                        "appsink sync=TRUE emit-signals=TRUE name=appsink-video",
+                        &gError);
+                    break;
+                }
             }
             break;
 
@@ -294,6 +302,11 @@ PVOID sendGstreamerAudioVideo(PVOID args)
                     senderPipeline = gst_parse_launch(rtspPipeLineBuffer, &gError);
 
                     break;
+                }
+                case STDIN_H264_SOURCE: {
+                    DLOGE("[KVS GStreamer Master] stdin H264 source only supports video-only mode");
+                    retStatus = STATUS_INVALID_OPERATION;
+                    goto CleanUp;
                 }
             }
             break;
@@ -436,6 +449,9 @@ STATUS parseSrcType(PSampleConfiguration pSampleConfiguration, INT32 argc, CHAR*
                 pSampleConfiguration->srcType = RTSP_SOURCE;
                 pSampleConfiguration->rtspUri = argv[startIndex + 1];
             }
+        } else if (STRCMP(argv[startIndex], "stdinh264") == 0) {
+            DLOGI("Using stdin H264 source in GStreamer");
+            pSampleConfiguration->srcType = STDIN_H264_SOURCE;
         } else {
             DLOGI("Unrecognized source type. Defaulting to device source in GStreamer");
         }
